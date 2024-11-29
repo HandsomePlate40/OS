@@ -1,6 +1,7 @@
 package Cores;
 
 import Process_Related.ProcessControlBlock;
+import Process_Related.Process;
 import Queue.ReadyQueue;
 
 public class MasterCore {
@@ -16,5 +17,12 @@ public class MasterCore {
 
     public void scheduleTask(){
 
+        if(!readyQueue.isEmpty()){
+            Process currentRunningProcess = readyQueue.removeProcess();
+        }
+        else{
+            System.out.println("No process in the ready queue");
+        }
+        
     }
 }

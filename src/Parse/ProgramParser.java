@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Cores.MasterCore;
-
 public class ProgramParser {
 
     ReadyQueue readyQueue = new ReadyQueue();
