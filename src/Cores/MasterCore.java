@@ -28,14 +28,20 @@ public class MasterCore {
     }
 
     public void scheduleTask() {
-        for (SlaveCore core : slaveCores) {
-            if (!core.isRunning() && !readyQueue.isEmpty()) {
-                Process currentRunningProcess = readyQueue.peekProcess();
-                System.out.println(currentRunningProcess.getCurrentInstruction().getOperand2());
-                readyQueue.removeProcess();
-                core.setCurrProcess(currentRunningProcess);
-                currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
-                core.setStatus(true); 
+        while (true) {
+            for (SlaveCore core : slaveCores) {
+                if (!core.isRunning() && !readyQueue.isEmpty()) {
+                    Process currentRunningProcess = readyQueue.peekProcess();
+                    readyQueue.removeProcess();
+                    core.setCurrProcess(currentRunningProcess);
+                    currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
+                    core.setStatus(true); 
+                }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

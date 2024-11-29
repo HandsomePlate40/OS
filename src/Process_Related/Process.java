@@ -27,7 +27,12 @@ public class Process {
     public void setComplete(boolean complete) { isComplete = complete; }
 
     public Instruction getCurrentInstruction() { 
-        return instructions.get(pcb.getProgramCounter()); 
+        int programCounter = pcb.getProgramCounter();
+        if (programCounter >= instructions.size()) {
+            isComplete = true;
+            return null;
+        }
+        return instructions.get(programCounter); 
     }
 
 }

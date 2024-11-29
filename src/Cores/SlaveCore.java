@@ -39,7 +39,6 @@ public class SlaveCore extends Thread {
                         currProcess = null; 
                         status = false; 
                     } else {
-                        
                         currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                         readyQueue.addProcess(currProcess);
                         System.out.println("Quantum expired for Process " + currProcess.getPid() + ". Re-enqueuing.");
@@ -59,12 +58,13 @@ public class SlaveCore extends Thread {
         }
 
         public void executeTask(Instruction currentInstruction) {
-            
+            memory.printMemory();
         switch(currentInstruction.getOperation()){
 
             case "assign": 
             if(currentInstruction.getOperand1().equals("input")){
-                memory.storeVar(currentInstruction.getVariable(), Integer.parseInt(currentInstruction.getOperand2()));break;
+                int val = Integer.parseInt(currentInstruction.getOperand2());
+                memory.storeVar(currentInstruction.getVariable(), val);break;
             }else{
                 int result = 0;
                 switch(currentInstruction.getOperation2()){
