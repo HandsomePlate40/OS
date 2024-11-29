@@ -1,4 +1,3 @@
-// Process.java
 public class Process {
     private int pid;
     private int arrivalTime;

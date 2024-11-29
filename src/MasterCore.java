@@ -10,4 +10,8 @@ public class MasterCore {
         this.readyQueue = readyQueue;
         this.processControlBlocks = processControlBlocks;
     }
+
+    public void scheduleTask(){
+
+    }
 }
