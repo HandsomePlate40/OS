@@ -25,9 +25,26 @@ public class ProgramParser {
                     case "assign":
                         // Variable assignment: assign x input OR assign z add a b
                         if (parts[2].equals("input")) {
-                            instructions.add(new Instruction("assign", parts[1], "input", null));
+                            instructions.add(new Instruction("assign", parts[1], "input", parts[3]));
                         } else {
-                            instructions.add(new Instruction("assign", parts[1], parts[2], parts[3]));
+                                switch(parts[2]){
+                                    case "add":
+                                        instructions.add(new Instruction("assign", parts[1], "add", parts[3], parts[4]));
+                                        break;
+
+                                    case "subtract":
+                                        instructions.add(new Instruction("assign", parts[1], "subtract", parts[3], parts[4]));
+                                        break;
+
+                                    case "multiply":
+                                        instructions.add(new Instruction("assign", parts[1], "multiply", parts[3], parts[4]));
+                                        break;
+                                    
+                                    case "divide": 
+                                        instructions.add(new Instruction("assign", parts[1], "divide", parts[3], parts[4]));
+                                        break;
+                                }
+                            
                         }
                         break;
 

@@ -25,7 +25,7 @@ public class MasterCore {
     public void scheduleTask(){
         for(SlaveCore core: slaveCores){
 
-            if(core.isRunning() && readyQueue.isEmpty()){
+            if(!core.isRunning() && !readyQueue.isEmpty()){
 
                 Process currentRunningProcess = readyQueue.peekProcess();
                 readyQueue.removeProcess();
@@ -36,7 +36,6 @@ public class MasterCore {
                 try {
                     while (burst < 2 && !currentRunningProcess.isComplete()) {
 
-                        currentRunningProcess.getPcb().updateProgramCounter();
                         Instruction currentInstruction = currentRunningProcess.getCurrentInstruction();
 
                         if (currentInstruction == null) {
@@ -59,9 +58,6 @@ public class MasterCore {
                     currentRunningProcess.setComplete(true);
                 }
             }
-
- 
         }
-
     }
 }
