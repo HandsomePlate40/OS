@@ -1,4 +1,7 @@
+package Queue;
 import java.util.Queue;
+
+import Process_Related.Process;
 
 public class ReadyQueue {
     private Queue<Process> readyQueue;

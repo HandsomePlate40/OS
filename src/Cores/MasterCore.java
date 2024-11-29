@@ -1,5 +1,8 @@
+package Cores;
 import java.util.Map;
-import java.util.Queue;
+
+import Process_Related.ProcessControlBlock;
+import Queue.ReadyQueue;
 
 public class MasterCore {
     private ReadyQueue readyQueue;

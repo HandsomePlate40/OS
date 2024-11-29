@@ -1,10 +1,13 @@
 package Parse;
-
+import Process_Related.Process;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class ProgramParser {
     public static List<Instruction> parseProgram(String fileName) {
@@ -41,6 +44,28 @@ public class ProgramParser {
 
         return instructions;
     }
+
+ public static List<Process> createProcesses(List<Instruction> instructions) {
+    List<Process> processes = new ArrayList<>();
+
+    Process newProcess = new Process();
+    newProcess.setProcessId(generateUniqueId()); // Assign a unique ID to each process
+    Queue<Task> taskQueue = new LinkedList<>();
+    
+    // Convert Instructions to Tasks and add to Process
+    for (Instruction instruction : instructions) {
+        Task task = new Task(instruction.getOperation(), Arrays.asList(instruction.getOperand1(), instruction.getOperand2()));
+        taskQueue.add(task);
+    }
+
+    newProcess.setInstructions(taskQueue);
+    processes.add(newProcess);
+
+    return processes;
+}
+
+
+
 
     public static void main(String[] args) {
         List<Instruction> program = parseProgram("Program_1.txt");
