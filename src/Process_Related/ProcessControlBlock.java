@@ -1,7 +1,7 @@
 package Process_Related;
 public class ProcessControlBlock{
-    private int pid;
-    private int programCounter;
+    final private int pid;
+    private int programCounter; //instruction currently on
 
     public ProcessControlBlock(int pid){
         this.pid = pid;

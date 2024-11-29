@@ -7,6 +7,7 @@ public class Process {
     private int priority;
     private ProcessState state;
     private List<Instruction> instructions;
+    private ProcessControlBlock pcb;
 
     public enum ProcessState {
         NEW, READY, RUNNING, WAITING, TERMINATED
@@ -18,6 +19,7 @@ public class Process {
         this.state = ProcessState.NEW;
     }
 
+    //setters and getters
     public int getPid() { return pid; }
     public void setPid(int pid) { this.pid = pid; }
     public ProcessState getState() { return state; }
@@ -25,4 +27,7 @@ public class Process {
     public List<Instruction> getInstructions() { return instructions; }
     public int getPriority() { return priority; }
     public void setInstructions(List<Instruction> instructions) { this.instructions = instructions; }
+    public ProcessControlBlock getPcb() {return pcb;}
+    public void setPcb(ProcessControlBlock pcb) {this.pcb = pcb;}
+
 }

@@ -1,10 +1,10 @@
 package Parse;
 
 public class Instruction {
-    String operation; // e.g., assign, add, print
-    String variable;  // Target variable (if applicable)
-    String operand1;  // First operand (if applicable)
-    String operand2;  // Second operand (if applicable)
+    String operation; 
+    String variable;  
+    String operand1;  
+    String operand2; 
 
     public Instruction(String operation, String variable, String operand1, String operand2) {
         this.operation = operation;
@@ -16,6 +16,22 @@ public class Instruction {
     @Override
     public String toString() {
         return operation + " " + variable + " " + operand1 + " " + operand2;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public String getVariable() {
+        return variable;
+    }
+
+    public String getOperand1() {
+        return operand1;
+    }
+
+    public String getOperand2() {
+        return operand2;
     }
 }
 

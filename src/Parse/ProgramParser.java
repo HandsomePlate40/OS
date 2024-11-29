@@ -1,16 +1,21 @@
 package Parse;
+
 import Process_Related.Process;
+import Process_Related.ProcessControlBlock;
+import Queue.ReadyQueue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+
+import Cores.MasterCore;
 
 public class ProgramParser {
-    public static List<Instruction> parseProgram(String fileName) {
+
+    ReadyQueue readyQueue = new ReadyQueue();
+
+    public void parseProgram(String fileName) {
         List<Instruction> instructions = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -41,35 +46,36 @@ public class ProgramParser {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        return instructions;
+        createProcess(instructions);
     }
 
- public static List<Process> createProcess(List<Instruction> instructions) {
+    public ReadyQueue createProcess(List<Instruction> instructions) {
 
-    List<Process> process = new ArrayList<>();
+        Process newProcess = new Process();
+        newProcess.setPid(PIDAssigner());
 
-    Process newProcess = new Process();
-    newProcess.setPid(0); //MAKE ASSIGNER LATER 
-    List<Instruction> instructionsList = new ArrayList<>();
+        ProcessControlBlock newPCB = new ProcessControlBlock(newProcess.getPid());
+        newProcess.setPcb(newPCB);
+        List<Instruction> instructionsList = new ArrayList<>();
 
-    for (Instruction instruction : instructions) {
-        instructionsList.add(instruction);
-    }
-    newProcess.setInstructions(instructionsList);
-    process.add(newProcess);
-    return process;
-}
-
-
-
-
-    public static void main(String[] args) {
-        List<Instruction> program = parseProgram("Program_1.txt");
-
-        // Debug: Print parsed instructions
-        for (Instruction instr : program) {
-            System.out.println(instr);
+        for (Instruction instruction : instructions) {
+            instructionsList.add(instruction);
         }
+        newProcess.setInstructions(instructionsList);
+        readyQueue.addProcess(newProcess);
+        return readyQueue;
+    }
+
+    public int PIDAssigner() {
+
+        int maxPID = -1; 
+
+        for(Process process : readyQueue.getReadyQueue()) {
+            if(process.getPid() > maxPID) {
+                maxPID = process.getPid();
+            }
+        }
+        return maxPID + 1;
     }
 }
 
