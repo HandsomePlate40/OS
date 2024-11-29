@@ -9,7 +9,7 @@ public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
     private Memory memory;
-    private ReadyQueue readyQueue;
+    private final ReadyQueue readyQueue;
 
     public SlaveCore(ReadyQueue readyQueue) {
         this.memory = new Memory();
@@ -58,7 +58,7 @@ public class SlaveCore extends Thread {
         }
 
         public void executeTask(Instruction currentInstruction) {
-            memory.printMemory();
+
         switch(currentInstruction.getOperation()){
 
             case "assign": 
