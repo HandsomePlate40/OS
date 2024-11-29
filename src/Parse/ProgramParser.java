@@ -41,27 +41,23 @@ public class ProgramParser {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-
         return instructions;
     }
 
- public static List<Process> createProcesses(List<Instruction> instructions) {
-    List<Process> processes = new ArrayList<>();
+ public static List<Process> createProcess(List<Instruction> instructions) {
+
+    List<Process> process = new ArrayList<>();
 
     Process newProcess = new Process();
-    newProcess.setProcessId(generateUniqueId()); // Assign a unique ID to each process
-    Queue<Task> taskQueue = new LinkedList<>();
-    
-    // Convert Instructions to Tasks and add to Process
+    newProcess.setPid(0); //MAKE ASSIGNER LATER 
+    List<Instruction> instructionsList = new ArrayList<>();
+
     for (Instruction instruction : instructions) {
-        Task task = new Task(instruction.getOperation(), Arrays.asList(instruction.getOperand1(), instruction.getOperand2()));
-        taskQueue.add(task);
+        instructionsList.add(instruction);
     }
-
-    newProcess.setInstructions(taskQueue);
-    processes.add(newProcess);
-
-    return processes;
+    newProcess.setInstructions(instructionsList);
+    process.add(newProcess);
+    return process;
 }
 
 
