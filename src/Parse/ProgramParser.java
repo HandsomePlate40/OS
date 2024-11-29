@@ -54,12 +54,9 @@ public class ProgramParser {
 
         ProcessControlBlock newPCB = new ProcessControlBlock(newProcess.getPid());
         newProcess.setPcb(newPCB);
-        List<Instruction> instructionsList = new ArrayList<>();
 
-        for (Instruction instruction : instructions) {
-            instructionsList.add(instruction);
-        }
-        newProcess.setInstructions(instructionsList);
+        newProcess.setInstructions(instructions);
+        newProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
         readyQueue.addProcess(newProcess);
         return readyQueue;
     }

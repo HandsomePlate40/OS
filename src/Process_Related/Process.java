@@ -5,29 +5,29 @@ import Parse.Instruction;
 public class Process {
     private int pid;
     private int priority;
-    private ProcessState state;
     private List<Instruction> instructions;
     private ProcessControlBlock pcb;
-
-    public enum ProcessState {
-        NEW, READY, RUNNING, WAITING, TERMINATED
-    }
+    private boolean isComplete;
 
     public Process() {
         this.pid = 0;
         this.priority = 0;
-        this.state = ProcessState.NEW;
+        this.isComplete = false;
     }
 
     //setters and getters
     public int getPid() { return pid; }
     public void setPid(int pid) { this.pid = pid; }
-    public ProcessState getState() { return state; }
-    public void setState(ProcessState state) { this.state = state; }
     public List<Instruction> getInstructions() { return instructions; }
     public int getPriority() { return priority; }
     public void setInstructions(List<Instruction> instructions) { this.instructions = instructions; }
     public ProcessControlBlock getPcb() {return pcb;}
     public void setPcb(ProcessControlBlock pcb) {this.pcb = pcb;}
+    public boolean isComplete() { return isComplete; }
+    public void setComplete(boolean complete) { isComplete = complete; }
+
+    public Instruction getCurrentInstruction() { 
+        return instructions.get(pcb.getProgramCounter()); 
+    }
 
 }

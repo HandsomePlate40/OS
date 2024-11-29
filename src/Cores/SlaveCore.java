@@ -1,5 +1,6 @@
 package Cores;
 import Memory.Memory;
+import Parse.Instruction;
 import Process_Related.Process;
 
 public class SlaveCore extends Thread {
@@ -10,6 +11,11 @@ public class SlaveCore extends Thread {
     public SlaveCore() {
         this.memory = new Memory();
         this.status = false;
+    }
+
+    public void executeTask(Instruction currentInstruction) {
+        
+        
     }
 
     public Process getCurrProcess() {

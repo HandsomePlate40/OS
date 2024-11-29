@@ -14,6 +14,10 @@ public class ReadyQueue {
         readyQueue.add(process);
     }
 
+    public Process peekProcess() {
+        return readyQueue.peek();
+    }
+
     public Process removeProcess() {
         return readyQueue.remove();
     }
@@ -21,7 +25,7 @@ public class ReadyQueue {
     public boolean isEmpty() {
         return readyQueue.isEmpty();
     }
-    
+
     public Queue<Process> getReadyQueue() {
         return readyQueue;
     }
