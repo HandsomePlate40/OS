@@ -1,5 +1,7 @@
 package Queue;
+import java.util.LinkedList;
 import java.util.Queue;
+
 
 import Process_Related.Process;
 
@@ -7,7 +9,7 @@ public class ReadyQueue {
     private Queue<Process> readyQueue;
 
     public ReadyQueue() {
-        // Initialize the readyQueue and add process from ProgramParser
+        this.readyQueue = new LinkedList<>();
     }
 
     public void addProcess(Process process) {

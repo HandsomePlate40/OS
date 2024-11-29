@@ -2,24 +2,69 @@ package Cores;
 import Memory.Memory;
 import Parse.Instruction;
 import Process_Related.Process;
+import Process_Related.ProcessControlBlock;
+import Queue.ReadyQueue;
 
 public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
     private Memory memory;
+    private ReadyQueue readyQueue;
 
-    public SlaveCore() {
+    public SlaveCore(ReadyQueue readyQueue) {
         this.memory = new Memory();
         this.status = false;
-    }
-
-    public void executeTask(Instruction currentInstruction) {
+        this.readyQueue = readyQueue;
+        }
         
+        @Override
+        public void run() {
+            while (true) {
+                if (currProcess != null && !currProcess.isComplete()) {
+                    status = true; 
+                    int burst = 0; 
+                    
+                    while (burst < 2 && !currProcess.isComplete()) {
+                        Instruction currentInstruction = currProcess.getCurrentInstruction();
+                        if (currentInstruction != null) {
+                            executeTask(currentInstruction);
+                            currProcess.getPcb().updateProgramCounter();
+                        }
+                        burst++;
+                    }
+                    
+                    if (currProcess.isComplete()) {
+                        currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
+                        System.out.println("Process " + currProcess.getPid() + " completed by SlaveCore " + this.getName());
+                        currProcess = null; 
+                        status = false; 
+                    } else {
+                        
+                        currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
+                        readyQueue.addProcess(currProcess);
+                        System.out.println("Quantum expired for Process " + currProcess.getPid() + ". Re-enqueuing.");
+                        currProcess = null;
+                        status = false;
+                    }
+                } else {
+                    // No current process, yield and sleep to reduce CPU usage
+                    Thread.yield();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public void executeTask(Instruction currentInstruction) {
+            
         switch(currentInstruction.getOperation()){
 
             case "assign": 
-            if(currentInstruction.getOperation2() == null){
-                memory.storeVar(currentInstruction.getVariable(), Integer.parseInt(currentInstruction.getOperand1()));break;
+            if(currentInstruction.getOperand1().equals("input")){
+                memory.storeVar(currentInstruction.getVariable(), Integer.parseInt(currentInstruction.getOperand2()));break;
             }else{
                 int result = 0;
                 switch(currentInstruction.getOperation2()){

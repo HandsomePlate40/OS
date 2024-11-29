@@ -15,4 +15,8 @@ public class Memory {
     public int getVar(String varName) {
         return storedVars.get(varName);
     }
+
+    public void printMemory() {
+        System.out.println(storedVars);
+    }
 }

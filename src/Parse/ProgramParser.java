@@ -12,56 +12,68 @@ import java.util.List;
 public class ProgramParser {
 
     ReadyQueue readyQueue = new ReadyQueue();
+    int PIDCounter = 0;
 
-    public void parseProgram(String fileName) {
+    public ReadyQueue parseProgram(String fileName) {
         List<Instruction> instructions = new ArrayList<>();
-
+    
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.trim().split(" ");
-
-                switch (parts[0]) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                
+                // Debug print
+                //System.out.println("Processing line: " + line);
+                
+                String[] parts = line.trim().split("\\s+");
+                
+                // Debug print
+                //System.out.println("Parts length: " + parts.length);
+                //System.out.println("First part: " + parts[3]);
+    
+                switch (parts[0].toLowerCase()) {  // Make case-insensitive
                     case "assign":
-                        // Variable assignment: assign x input OR assign z add a b
+                        if (parts.length < 3) {
+                            System.out.println("Invalid assign instruction: " + line);
+                            continue;
+                        }
                         if (parts[2].equals("input")) {
                             instructions.add(new Instruction("assign", parts[1], "input", parts[3]));
-                        } else {
-                                switch(parts[2]){
-                                    case "add":
-                                        instructions.add(new Instruction("assign", parts[1], "add", parts[3], parts[4]));
-                                        break;
-
-                                    case "subtract":
-                                        instructions.add(new Instruction("assign", parts[1], "subtract", parts[3], parts[4]));
-                                        break;
-
-                                    case "multiply":
-                                        instructions.add(new Instruction("assign", parts[1], "multiply", parts[3], parts[4]));
-                                        break;
-                                    
-                                    case "divide": 
-                                        instructions.add(new Instruction("assign", parts[1], "divide", parts[3], parts[4]));
-                                        break;
-                                }
                             
+                        } else {
+                            switch(parts[2]){
+                                case "add":
+                                case "subtract":
+                                case "multiply":
+                                case "divide":
+                                    instructions.add(new Instruction("assign", parts[1], parts[2], parts[3], parts[4]));
+                                    break;
+                                default:
+                                    System.out.println("Unknown operation: " + parts[2]);
+                            }
                         }
                         break;
-
+    
                     case "print":
-                        // Print command: print x
+                        if (parts.length < 2) {
+                            System.out.println("Invalid print instruction: " + line);
+                            continue;
+                        }
                         instructions.add(new Instruction("print", parts[1], null, null));
                         break;
-
+    
                     default:
-                        System.out.println("Unknown instruction: " + line);
+                        System.out.println("Unknown instruction type: " + parts[0]);
                         break;
                 }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        createProcess(instructions);
+        return createProcess(instructions);
     }
 
     public ReadyQueue createProcess(List<Instruction> instructions) {
@@ -79,15 +91,7 @@ public class ProgramParser {
     }
 
     public int PIDAssigner() {
-
-        int maxPID = -1; 
-
-        for(Process process : readyQueue.getReadyQueue()) {
-            if(process.getPid() > maxPID) {
-                maxPID = process.getPid();
-            }
-        }
-        return maxPID + 1;
+        return PIDCounter++;
     }
 }
 
