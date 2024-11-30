@@ -1,6 +1,8 @@
 package Process_Related;
-import java.util.List;
+
 import Parse.Instruction;
+
+import java.util.List;
 
 public class Process {
     private int pid;
@@ -13,7 +15,6 @@ public class Process {
         this.isComplete = false;
     }
 
-    //setters and getters
     public int getPid() { return pid; }
     public void setPid(int pid) { this.pid = pid; }
     public List<Instruction> getInstructions() { return instructions; }

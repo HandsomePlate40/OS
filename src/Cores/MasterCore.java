@@ -1,9 +1,8 @@
-// src/Cores/MasterCore.java
 package Cores;
 
 import Memory.Memory;
-import Process_Related.ProcessControlBlock;
 import Process_Related.Process;
+import Process_Related.ProcessControlBlock;
 import Queue.ReadyQueue;
 
 import java.util.LinkedList;

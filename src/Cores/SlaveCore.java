@@ -1,4 +1,4 @@
-// src/Cores/SlaveCore.java
+
 package Cores;
 import Memory.Memory;
 import Parse.Instruction;
@@ -40,7 +40,6 @@ public class SlaveCore extends Thread {
                     System.out.println("Process " + currProcess.getPid() + " completed by SlaveCore " + this.getName());
                     currProcess = null;
                     status = false;
-                    memory.printMemory();
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
@@ -90,7 +89,7 @@ public class SlaveCore extends Thread {
                     break;
                 case "print":
                     if (!memory.containsKey(currentInstruction.getVariable())) {
-                        System.out.println("Variable does not exist in memory");
+                        System.out.println("Variable does not exist in memory" + " in Process " + currProcess.getPid());
                     } else {
                         System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memory.getVar(currentInstruction.getVariable()) + " in Process " + currProcess.getPid());
                     }
@@ -99,6 +98,7 @@ public class SlaveCore extends Thread {
         } finally {
             memory.unlock();
         }
+        memory.printMemory();
     }
 
     public void setCurrProcess(Process currProcess) {

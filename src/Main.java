@@ -1,6 +1,6 @@
-import Cores.*;
-import Parse.ProgramParser;
+import Cores.MasterCore;
 import Memory.Memory;
+import Parse.ProgramParser;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,4 +13,6 @@ public class Main {
         new Thread(master1::scheduleTask).start();
         new Thread(master2::scheduleTask).start();
     }
+    //If you do any modifications please tell me, so I can implement them!
+    //If you get files not found change the inserted file names above to the correct path
 }

@@ -1,9 +1,9 @@
-// src/Parse/ProgramParser.java
 package Parse;
 
 import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 import Queue.ReadyQueue;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,20 +22,18 @@ public class ProgramParser {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Skip empty lines
                 if (line.trim().isEmpty()) {
                     continue;
                 }
 
                 String[] parts = line.trim().split("\\s+");
 
-                // Ensure parts array has the expected number of elements
                 if (parts.length < 2) {
                     System.out.println("Invalid instruction: " + line + " in file: " + fileName);
                     System.exit(1);
                 }
 
-                switch (parts[0].toLowerCase()) {  // Make case-insensitive
+                switch (parts[0].toLowerCase()) {
                     case "assign":
                         if (parts.length < 4) {
                             System.out.println("Invalid assign instruction: " + line + " in file: " + fileName);
