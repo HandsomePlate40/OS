@@ -43,7 +43,7 @@ public class SlaveCore extends Thread {
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
-                    System.out.println("Time expired for Process " + currProcess.getPid() + ". Re-enqueuing.");
+                    //System.out.println("Time expired for Process " + currProcess.getPid() + ". Re-enqueuing.");
                     currProcess = null;
                     status = false;
                 }
@@ -58,7 +58,6 @@ public class SlaveCore extends Thread {
         }
     }
 
-    // src/Cores/SlaveCore.java
     public void executeTask(Instruction currentInstruction) {
         memory.lock();
         try {
@@ -106,10 +105,6 @@ public class SlaveCore extends Thread {
         }
     }
 
-    public Process getCurrProcess() {
-        return currProcess;
-    }
-
     public void setCurrProcess(Process currProcess) {
         this.currProcess = currProcess;
     }
@@ -120,13 +115,5 @@ public class SlaveCore extends Thread {
 
     public void setStatus(boolean status) {
         this.status = status;
-    }
-
-    public Memory getMemory() {
-        return memory;
-    }
-
-    public void setMemory(Memory memory) {
-        this.memory = memory;
     }
 }

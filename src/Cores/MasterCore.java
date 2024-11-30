@@ -21,6 +21,7 @@ public class MasterCore {
         this.memory = memory;
         for (int i = 0; i < 2; i++) {
             SlaveCore slaveCore = new SlaveCore(readyQueue, memory);
+            slaveCore.setName("SlaveCore-" + i);
             slaveCores.add(slaveCore);
             slaveCore.start();
         }
