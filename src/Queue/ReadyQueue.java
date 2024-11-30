@@ -21,7 +21,11 @@ public class ReadyQueue {
     }
 
     public Process removeProcess() {
-        return readyQueue.remove();
+        if (readyQueue.isEmpty()) {
+            return null;
+        } else {
+            return readyQueue.remove();
+        }
     }
 
     public boolean isEmpty() {

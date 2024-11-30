@@ -12,8 +12,8 @@ public class Main {
         MasterCore master1 = new MasterCore(parser.parseProgram("Programs/Program_1.txt"), sharedMemory);
         MasterCore master2 = new MasterCore(parser.parseProgram("Programs/Program_2.txt"), sharedMemory);
 
-        // Running all constructed programs
-        new Thread(() -> master1.scheduleTask()).start();
-        new Thread(() -> master2.scheduleTask()).start();
+        // Running
+        new Thread(master1::scheduleTask).start();
+        new Thread(master2::scheduleTask).start();
     }
 }

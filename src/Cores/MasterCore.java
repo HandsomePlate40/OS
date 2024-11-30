@@ -7,7 +7,6 @@ import Process_Related.ProcessControlBlock;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Parse.Instruction;
 import Process_Related.Process;
 import Queue.ReadyQueue;
 
@@ -33,7 +32,9 @@ public class MasterCore {
                 if (!core.isRunning() && !readyQueue.isEmpty()) {
                     Process currentRunningProcess = readyQueue.peekProcess();
                     if (currentRunningProcess != null) {
-                        readyQueue.removeProcess();
+                        if (!readyQueue.isEmpty()) {
+                            readyQueue.removeProcess();
+                        }
                         core.setCurrProcess(currentRunningProcess);
                         currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
                         core.setStatus(true);
