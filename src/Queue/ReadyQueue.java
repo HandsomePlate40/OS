@@ -1,15 +1,16 @@
 package Queue;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.locks.ReentrantLock;
+
 import Process_Related.Process;
 
+import java.util.PriorityQueue;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class ReadyQueue {
-    private final Queue<Process> readyQueue;
+    private final PriorityQueue<Process> readyQueue;
     private final ReentrantLock lock;
 
     public ReadyQueue() {
-        this.readyQueue = new LinkedList<>();
+        this.readyQueue = new PriorityQueue<>();
         this.lock = new ReentrantLock();
     }
 
@@ -34,10 +35,7 @@ public class ReadyQueue {
     public void removeProcess() {
         lock.lock();
         try {
-            if (readyQueue.isEmpty()) {
-            } else {
-                readyQueue.remove();
-            }
+            readyQueue.poll();
         } finally {
             lock.unlock();
         }
@@ -52,7 +50,7 @@ public class ReadyQueue {
         }
     }
 
-    public Queue<Process> getReadyQueue() {
+    public PriorityQueue<Process> getReadyQueue() {
         lock.lock();
         try {
             return readyQueue;

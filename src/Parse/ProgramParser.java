@@ -2,7 +2,6 @@ package Parse;
 
 import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
-import Queue.ReadyQueue;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,11 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProgramParser {
-
-    ReadyQueue readyQueue = new ReadyQueue();
     int PIDCounter = 0;
 
-    public ReadyQueue parseProgram(String fileName) {
+    public Process parseProgram(String fileName) {
 
         List<Instruction> instructions = new ArrayList<>();
 
@@ -80,7 +77,7 @@ public class ProgramParser {
         return createProcess(instructions);
     }
 
-    public ReadyQueue createProcess(List<Instruction> instructions) {
+    public Process createProcess(List<Instruction> instructions) {
 
         Process newProcess = new Process();
         newProcess.setPid(PIDAssigner());
@@ -90,8 +87,7 @@ public class ProgramParser {
 
         newProcess.setInstructions(instructions);
         newProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
-        readyQueue.addProcess(newProcess);
-        return readyQueue;
+        return newProcess;
     }
 
     public int PIDAssigner() {

@@ -6,7 +6,7 @@ import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 import Queue.ReadyQueue;
 
-@SuppressWarnings("ALL")
+
 public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
@@ -49,7 +49,7 @@ public class SlaveCore extends Thread {
             } else {
                 Thread.yield();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -98,7 +98,6 @@ public class SlaveCore extends Thread {
         } finally {
             memory.unlock();
         }
-        memory.printMemory();
     }
 
     public void setCurrProcess(Process currProcess) {

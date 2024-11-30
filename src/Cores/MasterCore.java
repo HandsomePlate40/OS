@@ -11,12 +11,12 @@ import java.util.Queue;
 public class MasterCore {
     private final ReadyQueue readyQueue;
     private final Queue<SlaveCore> slaveCores;
-    private volatile boolean running;
+    private final Memory memory;
 
     public MasterCore(ReadyQueue readyQueue, Memory memory) {
         this.readyQueue = readyQueue;
         this.slaveCores = new LinkedList<>();
-        this.running = true;
+        this.memory = memory;
         for (int i = 0; i < 2; i++) {
             SlaveCore slaveCore = new SlaveCore(readyQueue, memory);
             slaveCore.setName("SlaveCore-" + i);
@@ -26,7 +26,7 @@ public class MasterCore {
     }
 
     public void scheduleTask() {
-        while (running) {
+        while (true) {
             for (SlaveCore core : slaveCores) {
                 if (!core.isRunning() && !readyQueue.isEmpty()) {
                     Process currentRunningProcess = readyQueue.peekProcess();
@@ -35,15 +35,15 @@ public class MasterCore {
                         core.setCurrProcess(currentRunningProcess);
                         currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
                         core.setStatus(true);
+                        memory.printMemory();
                     }
                 }
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.out.println("MasterCore interrupted and stopping.");
-                running = false;
             }
         }
     }
