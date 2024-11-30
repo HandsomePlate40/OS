@@ -13,12 +13,10 @@ import Queue.ReadyQueue;
 public class MasterCore {
     private ReadyQueue readyQueue;
     private final Queue<SlaveCore> slaveCores;
-    private Memory memory;
 
     public MasterCore(ReadyQueue readyQueue, Memory memory) {
         this.readyQueue = readyQueue;
         this.slaveCores = new LinkedList<>();
-        this.memory = memory;
         for (int i = 0; i < 2; i++) {
             SlaveCore slaveCore = new SlaveCore(readyQueue, memory);
             slaveCore.setName("SlaveCore-" + i);

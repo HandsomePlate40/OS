@@ -1,4 +1,4 @@
-
+// src/Memory/Memory.java
 package Memory;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,15 +12,10 @@ public class Memory {
         this.lock = new ReentrantLock();
     }
 
-
     public void storeVar(String varName, int value) {
         lock.lock();
         try {
-            if (!storedVars.containsKey(varName)) {
-                storedVars.put(varName, value);
-            } else {
-                System.out.println("Variable " + varName + " exists in memory");
-            }
+            storedVars.put(varName, value); // Always update the variable's value
         } finally {
             lock.unlock();
         }

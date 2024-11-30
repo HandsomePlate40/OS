@@ -9,7 +9,7 @@ import Queue.ReadyQueue;
 public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
-    private Memory memory;
+    private final Memory memory;
     private final ReadyQueue readyQueue;
 
     public SlaveCore(ReadyQueue readyQueue, Memory memory) {
@@ -43,7 +43,6 @@ public class SlaveCore extends Thread {
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
-                    //System.out.println("Time expired for Process " + currProcess.getPid() + ". Re-enqueuing.");
                     currProcess = null;
                     status = false;
                 }
