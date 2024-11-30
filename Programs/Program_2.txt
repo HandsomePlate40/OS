@@ -1,0 +1,9 @@
+assign c input 1
+assign d input 2
+assign e add c d
+assign a input 1
+assign b input 2
+assign f multiply c d
+print e
+assign f multiply c d
+print f

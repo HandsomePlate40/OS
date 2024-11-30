@@ -1,0 +1,4 @@
+assign hello input 1
+assign world input 5
+assign out add hello world 
+print out
