@@ -57,6 +57,7 @@ public class SlaveCore extends Thread {
         }
     }
 
+    // src/Cores/SlaveCore.java
     public void executeTask(Instruction currentInstruction) {
         memory.lock();
         try {
