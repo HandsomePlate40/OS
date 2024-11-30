@@ -1,5 +1,7 @@
+// src/Cores/MasterCore.java
 package Cores;
 
+import Memory.Memory;
 import Process_Related.ProcessControlBlock;
 
 import java.util.LinkedList;
@@ -11,20 +13,18 @@ import Queue.ReadyQueue;
 
 public class MasterCore {
     private ReadyQueue readyQueue;
-    private Queue<SlaveCore> slaveCores;
+    private final Queue<SlaveCore> slaveCores;
+    private Memory memory;
 
-    public MasterCore(ReadyQueue readyQueue) {
+    public MasterCore(ReadyQueue readyQueue, Memory memory) {
         this.readyQueue = readyQueue;
         this.slaveCores = new LinkedList<>();
+        this.memory = memory;
         for (int i = 0; i < 2; i++) {
-            SlaveCore slaveCore = new SlaveCore(readyQueue);
+            SlaveCore slaveCore = new SlaveCore(readyQueue, memory);
             slaveCores.add(slaveCore);
-            slaveCore.start(); 
+            slaveCore.start();
         }
-    }
-
-    public ReadyQueue getReadyQueue(){
-        return readyQueue;
     }
 
     public void scheduleTask() {
@@ -32,10 +32,12 @@ public class MasterCore {
             for (SlaveCore core : slaveCores) {
                 if (!core.isRunning() && !readyQueue.isEmpty()) {
                     Process currentRunningProcess = readyQueue.peekProcess();
-                    readyQueue.removeProcess();
-                    core.setCurrProcess(currentRunningProcess);
-                    currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
-                    core.setStatus(true); 
+                    if (currentRunningProcess != null) {
+                        readyQueue.removeProcess();
+                        core.setCurrProcess(currentRunningProcess);
+                        currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
+                        core.setStatus(true);
+                    }
                 }
             }
             try {

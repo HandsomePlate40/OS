@@ -4,14 +4,12 @@ import Parse.Instruction;
 
 public class Process {
     private int pid;
-    private int priority;
     private List<Instruction> instructions;
     private ProcessControlBlock pcb;
     private boolean isComplete;
 
     public Process() {
         this.pid = 0;
-        this.priority = 0;
         this.isComplete = false;
     }
 
@@ -19,7 +17,6 @@ public class Process {
     public int getPid() { return pid; }
     public void setPid(int pid) { this.pid = pid; }
     public List<Instruction> getInstructions() { return instructions; }
-    public int getPriority() { return priority; }
     public void setInstructions(List<Instruction> instructions) { this.instructions = instructions; }
     public ProcessControlBlock getPcb() {return pcb;}
     public void setPcb(ProcessControlBlock pcb) {this.pcb = pcb;}

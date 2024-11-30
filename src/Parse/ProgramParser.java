@@ -15,6 +15,7 @@ public class ProgramParser {
     int PIDCounter = 0;
 
     public ReadyQueue parseProgram(String fileName) {
+
         List<Instruction> instructions = new ArrayList<>();
     
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -24,7 +25,7 @@ public class ProgramParser {
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-                
+
                 // Debug print
                 //System.out.println("Processing line: " + line);
                 
@@ -71,7 +72,7 @@ public class ProgramParser {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("Error reading file: " + fileName);
         }
         return createProcess(instructions);
     }
