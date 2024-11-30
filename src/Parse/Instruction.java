@@ -23,6 +23,10 @@ public class Instruction {
         this.operation2 = operation2;
     }
 
+    public boolean requiresMemoryStorage(){
+        return operation.equals("assign");
+    }
+
     @Override
     public String toString() {
         return operation + " " + variable + " " + operand1 + " " + operand2;

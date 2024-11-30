@@ -1,5 +1,6 @@
 package Parse;
 
+import Memory.Memory;
 import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class ProgramParser {
     int PIDCounter = 0;
+    Memory sharedMemory = new Memory();
 
     public Process parseProgram(String fileName) {
 
@@ -58,10 +60,6 @@ public class ProgramParser {
                         break;
 
                     case "print":
-                        if (parts.length < 2) {
-                            System.out.println("Invalid print instruction: " + line + " in file: " + fileName);
-                            System.exit(1);
-                        }
                         instructions.add(new Instruction("print", parts[1], null, null));
                         break;
 
@@ -82,15 +80,35 @@ public class ProgramParser {
         Process newProcess = new Process();
         newProcess.setPid(PIDAssigner());
 
-        ProcessControlBlock newPCB = new ProcessControlBlock(newProcess.getPid());
+        ProcessControlBlock newPCB = new ProcessControlBlock(newProcess.getPid(), getMemoryLimitForNewProcess(instructions));
         newProcess.setPcb(newPCB);
 
         newProcess.setInstructions(instructions);
         newProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
+        assignMemoryBlocksToProcesses(newProcess);
         return newProcess;
     }
 
     public int PIDAssigner() {
         return PIDCounter++;
+    }
+
+    public void assignMemoryBlocksToProcesses(Process process){
+        //System.out.println("Assigning memory blocks to process " + process.getPid());
+        sharedMemory.allocateMemoryForProcess(process.getPid(), process.getPcb().getLimit());
+    }
+
+    public int getMemoryLimitForNewProcess(List<Instruction> instructions){
+        int memoryLimit = 0;
+        for(Instruction instruction : instructions){
+            if(instruction.requiresMemoryStorage()){
+                memoryLimit++;
+            }
+        }
+        return memoryLimit;
+    }
+
+    public Memory getSharedMemory(){
+        return sharedMemory;
     }
 }

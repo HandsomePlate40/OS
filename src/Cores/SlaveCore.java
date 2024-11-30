@@ -1,11 +1,10 @@
-
 package Cores;
 import Memory.Memory;
+import Memory.MemoryBlock;
 import Parse.Instruction;
 import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 import Queue.ReadyQueue;
-
 
 public class SlaveCore extends Thread {
     private Process currProcess;
@@ -35,15 +34,21 @@ public class SlaveCore extends Thread {
                     burst++;
                 }
 
+                memory.getMemoryBlock(currProcess.getPid()).printMemory();
+
+
                 if (currProcess.isComplete()) {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
-                    System.out.println("Process " + currProcess.getPid() + " completed by SlaveCore " + this.getName());
+                    memory.deallocateMemory(currProcess.getPid());
+                    System.out.println("**Process " + currProcess.getPid() + " completed by SlaveCore " + this.getName() + "**");
+                    System.out.println();
                     currProcess = null;
                     status = false;
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
-                    System.out.println("Process " + currProcess.getPid() + " added back to ReadyQueue by SlaveCore " + this.getName());
+                    System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by SlaveCore " + this.getName() + "**");
+                    System.out.println();
                     currProcess = null;
                     status = false;
                 }
@@ -59,45 +64,50 @@ public class SlaveCore extends Thread {
     }
 
     public void executeTask(Instruction currentInstruction) {
-        memory.lock();
+        memory.getMemoryBlock(currProcess.getPid()).memoryLock();
         try {
+            MemoryBlock memoryBlock = memory.getMemoryBlock(currProcess.getPid());
             switch (currentInstruction.getOperation()) {
                 case "assign":
                     if (currentInstruction.getOperand1().equals("input")) {
                         int val = Integer.parseInt(currentInstruction.getOperand2());
-                        memory.storeVar(currentInstruction.getVariable(), val);
+                        memoryBlock.storeVar(currentInstruction.getVariable(), val);
                     } else {
                         int result;
-                        switch (currentInstruction.getOperation2()) {
-                            case "add":
-                                result = memory.getVar(currentInstruction.getOperand1()) + memory.getVar(currentInstruction.getOperand2());
-                                memory.storeVar(currentInstruction.getVariable(), result);
-                                break;
-                            case "subtract":
-                                result = memory.getVar(currentInstruction.getOperand1()) - memory.getVar(currentInstruction.getOperand2());
-                                memory.storeVar(currentInstruction.getVariable(), result);
-                                break;
-                            case "multiply":
-                                result = memory.getVar(currentInstruction.getOperand1()) * memory.getVar(currentInstruction.getOperand2());
-                                memory.storeVar(currentInstruction.getVariable(), result);
-                                break;
-                            case "divide":
-                                result = memory.getVar(currentInstruction.getOperand1()) / memory.getVar(currentInstruction.getOperand2());
-                                memory.storeVar(currentInstruction.getVariable(), result);
-                                break;
+                        try {
+                            switch (currentInstruction.getOperation2()) {
+                                case "add":
+                                    result = memoryBlock.getVar(currentInstruction.getOperand1()) + memoryBlock.getVar(currentInstruction.getOperand2());
+                                    memoryBlock.storeVar(currentInstruction.getVariable(), result);
+                                    break;
+                                case "subtract":
+                                    result = memoryBlock.getVar(currentInstruction.getOperand1()) - memoryBlock.getVar(currentInstruction.getOperand2());
+                                    memoryBlock.storeVar(currentInstruction.getVariable(), result);
+                                    break;
+                                case "multiply":
+                                    result = memoryBlock.getVar(currentInstruction.getOperand1()) * memoryBlock.getVar(currentInstruction.getOperand2());
+                                    memoryBlock.storeVar(currentInstruction.getVariable(), result);
+                                    break;
+                                case "divide":
+                                    result = memoryBlock.getVar(currentInstruction.getOperand1()) / memoryBlock.getVar(currentInstruction.getOperand2());
+                                    memoryBlock.storeVar(currentInstruction.getVariable(), result);
+                                    break;
+                            }
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage() + " in Process " + currProcess.getPid());
                         }
                     }
                     break;
                 case "print":
-                    if (!memory.containsKey(currentInstruction.getVariable())) {
-                        System.out.println("Variable does not exist in memory" + " in Process " + currProcess.getPid());
+                    if (!memoryBlock.containsKey(currentInstruction.getVariable())) {
+                        System.out.println("**************** Variable does not exist in memory" + " in Process " + currProcess.getPid() + " ****************");
                     } else {
-                        System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memory.getVar(currentInstruction.getVariable()) + " in Process " + currProcess.getPid());
+                        System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memoryBlock.getVar(currentInstruction.getVariable()) + " in Process " + currProcess.getPid());
                     }
                     break;
             }
         } finally {
-            memory.unlock();
+            memory.getMemoryBlock(currProcess.getPid()).memoryUnlock();
         }
     }
 
