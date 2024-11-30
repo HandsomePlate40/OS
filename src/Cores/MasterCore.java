@@ -40,7 +40,7 @@ public class MasterCore {
                 }
             }
             try {
-                Thread.sleep(50);
+                Thread.sleep(5);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.out.println("MasterCore interrupted and stopping.");

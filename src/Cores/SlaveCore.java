@@ -43,13 +43,14 @@ public class SlaveCore extends Thread {
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
+                    System.out.println("Process " + currProcess.getPid() + " added back to ReadyQueue by SlaveCore " + this.getName());
                     currProcess = null;
                     status = false;
                 }
             } else {
                 Thread.yield();
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
