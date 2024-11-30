@@ -3,20 +3,21 @@ package Cores;
 
 import Memory.Memory;
 import Process_Related.ProcessControlBlock;
+import Process_Related.Process;
+import Queue.ReadyQueue;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Process_Related.Process;
-import Queue.ReadyQueue;
-
 public class MasterCore {
-    private ReadyQueue readyQueue;
+    private final ReadyQueue readyQueue;
     private final Queue<SlaveCore> slaveCores;
+    private volatile boolean running;
 
     public MasterCore(ReadyQueue readyQueue, Memory memory) {
         this.readyQueue = readyQueue;
         this.slaveCores = new LinkedList<>();
+        this.running = true;
         for (int i = 0; i < 2; i++) {
             SlaveCore slaveCore = new SlaveCore(readyQueue, memory);
             slaveCore.setName("SlaveCore-" + i);
@@ -26,14 +27,12 @@ public class MasterCore {
     }
 
     public void scheduleTask() {
-        while (true) {
+        while (running) {
             for (SlaveCore core : slaveCores) {
                 if (!core.isRunning() && !readyQueue.isEmpty()) {
                     Process currentRunningProcess = readyQueue.peekProcess();
                     if (currentRunningProcess != null) {
-                        if (!readyQueue.isEmpty()) {
-                            readyQueue.removeProcess();
-                        }
+                        readyQueue.removeProcess();
                         core.setCurrProcess(currentRunningProcess);
                         currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
                         core.setStatus(true);
@@ -43,8 +42,17 @@ public class MasterCore {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+                System.out.println("MasterCore interrupted and stopping.");
+                running = false;
             }
+        }
+    }
+
+    public void stop() {
+        running = false;
+        for (SlaveCore core : slaveCores) {
+            core.interrupt();
         }
     }
 }

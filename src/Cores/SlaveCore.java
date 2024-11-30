@@ -6,6 +6,7 @@ import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 import Queue.ReadyQueue;
 
+@SuppressWarnings("ALL")
 public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
@@ -67,7 +68,7 @@ public class SlaveCore extends Thread {
                         int val = Integer.parseInt(currentInstruction.getOperand2());
                         memory.storeVar(currentInstruction.getVariable(), val);
                     } else {
-                        int result = 0;
+                        int result;
                         if (!memory.containsKey(currentInstruction.getOperand1()) || !memory.containsKey(currentInstruction.getOperand2())) {
                             System.out.println("Variable does not exist in memory");
                             break;
