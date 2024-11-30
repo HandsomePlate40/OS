@@ -58,7 +58,6 @@ public class SlaveCore extends Thread {
         }
     }
 
-    // src/Cores/SlaveCore.java
     public void executeTask(Instruction currentInstruction) {
         memory.lock();
         try {
@@ -69,10 +68,6 @@ public class SlaveCore extends Thread {
                         memory.storeVar(currentInstruction.getVariable(), val);
                     } else {
                         int result;
-                        if (!memory.containsKey(currentInstruction.getOperand1()) || !memory.containsKey(currentInstruction.getOperand2())) {
-                            System.out.println("Variable does not exist in memory");
-                            break;
-                        }
                         switch (currentInstruction.getOperation2()) {
                             case "add":
                                 result = memory.getVar(currentInstruction.getOperand1()) + memory.getVar(currentInstruction.getOperand2());

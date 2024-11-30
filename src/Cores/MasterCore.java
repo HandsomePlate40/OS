@@ -48,11 +48,4 @@ public class MasterCore {
             }
         }
     }
-
-    public void stop() {
-        running = false;
-        for (SlaveCore core : slaveCores) {
-            core.interrupt();
-        }
-    }
 }

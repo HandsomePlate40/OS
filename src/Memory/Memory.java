@@ -1,10 +1,9 @@
-// src/Memory/Memory.java
 package Memory;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Memory {
-    private HashMap<String, Integer> storedVars;
+    private final HashMap<String, Integer> storedVars;
     private final ReentrantLock lock;
 
     public Memory() {
@@ -15,7 +14,7 @@ public class Memory {
     public void storeVar(String varName, int value) {
         lock.lock();
         try {
-            storedVars.put(varName, value); // Always update the variable's value
+            storedVars.put(varName, value);
         } finally {
             lock.unlock();
         }
@@ -41,7 +40,11 @@ public class Memory {
     public void printMemory(){
         lock.lock();
         try {
-            System.out.println("Memory: " + storedVars);
+            int count = 0;
+            for(int i = 1; i <= storedVars.size(); i++){
+                count++;
+            }
+            System.out.println("Memory: " + storedVars + " Number of elements: " + count);
         } finally {
             lock.unlock();
         }

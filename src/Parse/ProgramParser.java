@@ -1,3 +1,4 @@
+// src/Parse/ProgramParser.java
 package Parse;
 
 import Process_Related.Process;
@@ -17,7 +18,7 @@ public class ProgramParser {
     public ReadyQueue parseProgram(String fileName) {
 
         List<Instruction> instructions = new ArrayList<>();
-    
+
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -26,25 +27,27 @@ public class ProgramParser {
                     continue;
                 }
 
-                // Debug print
-                //System.out.println("Processing line: " + line);
-                
                 String[] parts = line.trim().split("\\s+");
-                
-                // Debug print
-                //System.out.println("Parts length: " + parts.length);
-                //System.out.println("First part: " + parts[3]);
-    
+
+                // Ensure parts array has the expected number of elements
+                if (parts.length < 2) {
+                    System.out.println("Invalid instruction: " + line + " in file: " + fileName);
+                    System.exit(1);
+                }
+
                 switch (parts[0].toLowerCase()) {  // Make case-insensitive
                     case "assign":
-                        if (parts.length < 3) {
-                            System.out.println("Invalid assign instruction: " + line);
-                            continue;
+                        if (parts.length < 4) {
+                            System.out.println("Invalid assign instruction: " + line + " in file: " + fileName);
+                            System.exit(1);
                         }
                         if (parts[2].equals("input")) {
                             instructions.add(new Instruction("assign", parts[1], "input", parts[3]));
-                            
                         } else {
+                            if (parts.length < 5) {
+                                System.out.println("Invalid assign operation: " + line + " in file: " + fileName);
+                                System.exit(1);
+                            }
                             switch(parts[2]){
                                 case "add":
                                 case "subtract":
@@ -53,26 +56,28 @@ public class ProgramParser {
                                     instructions.add(new Instruction("assign", parts[1], parts[2], parts[3], parts[4]));
                                     break;
                                 default:
-                                    System.out.println("Unknown operation: " + parts[2]);
+                                    System.out.println("Unknown operation: " + parts[2] + " in file: " + fileName);
+                                    System.exit(1);
                             }
                         }
                         break;
-    
+
                     case "print":
                         if (parts.length < 2) {
-                            System.out.println("Invalid print instruction: " + line);
-                            continue;
+                            System.out.println("Invalid print instruction: " + line + " in file: " + fileName);
+                            System.exit(1);
                         }
                         instructions.add(new Instruction("print", parts[1], null, null));
                         break;
-    
+
                     default:
-                        System.out.println("Unknown instruction type: " + parts[0]);
-                        break;
+                        System.out.println("Unknown instruction type: " + parts[0] + " in file: " + fileName);
+                        System.exit(1);
                 }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + fileName);
+            System.exit(1);
         }
         return createProcess(instructions);
     }
@@ -95,4 +100,3 @@ public class ProgramParser {
         return PIDCounter++;
     }
 }
-
