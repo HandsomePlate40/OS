@@ -24,7 +24,7 @@ public class MasterCore {
         this.processStaticLog = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             SlaveCore slaveCore = new SlaveCore(readyQueue, memory);
-            slaveCore.setName("SlaveCore-" + i);
+            slaveCore.setName("SlaveCore -> " + i);
             slaveCores.add(slaveCore);
             slaveCore.start();
         }

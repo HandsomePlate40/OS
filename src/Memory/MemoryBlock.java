@@ -19,10 +19,6 @@ public class MemoryBlock {
         base++;
     }
 
-    private void updateCurrentlyUtilizedMemoryRemove(){ // This method is not used in the code
-        base--;
-    }
-
     public void storeVar(String varName, int value) {
         lock.lock();
         try {
