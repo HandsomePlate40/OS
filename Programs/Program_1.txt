@@ -1,6 +1,6 @@
-assign a input 2
+assign a input 1
 assign b input 4
-assign z add a b 
+assign z add a b
 print z
 assign x multiply a b 
 print x

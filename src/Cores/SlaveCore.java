@@ -1,4 +1,5 @@
 package Cores;
+
 import Memory.Memory;
 import Memory.MemoryBlock;
 import Parse.Instruction;
@@ -28,13 +29,13 @@ public class SlaveCore extends Thread {
             if (currProcess != null && !currProcess.isComplete()) {
                 status = true;
                 int burst = 0;
-                //round robin
+                //round-robin
                 while (burst < 2 && !currProcess.isComplete()) {
                     Instruction currentInstruction = currProcess.getCurrentInstruction();
                     if (currentInstruction != null) {
                         executeTask(currentInstruction);
                         currProcess.getPcb().updateProgramCounter();
-                    } else{
+                    } else {
                         currProcess.setComplete();
                         break;
                     }
@@ -42,17 +43,18 @@ public class SlaveCore extends Thread {
                 }
 
                 lock.lock();
-                try{
-                    System.out.println("Memory block of process: " + currProcess.getPid() + " "); memory.getMemoryBlock(currProcess.getPid()).printMemory();
+                try {
+                    System.out.println("Memory block of process: " + currProcess.getPid() + " ");
+                    memory.getMemoryBlock(currProcess.getPid()).printMemory();
                 } finally {
                     lock.unlock();
                 }
 
-                if (currProcess.isComplete() || currProcess.getCurrentInstruction() == null) { // bug fixed, process was not being removed correctly
+                if (currProcess.isComplete() || currProcess.getCurrentInstruction() == null) {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
                     memory.deallocateMemory(currProcess.getPid());
                     System.out.println("**Process " + currProcess.getPid() + " completed by " + this.getName() + "**");
-                } else if(!currProcess.isComplete()) {
+                } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
                     System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
@@ -61,20 +63,23 @@ public class SlaveCore extends Thread {
                 currProcess = null;
                 status = false;
             } else {
-                Thread.yield();
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this) {
+                    try {
+                        wait(5);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.out.println(this.getName() + " interrupted and stopping.");
+                        break;
+                    }
                 }
             }
         }
     }
 
     public void executeTask(Instruction currentInstruction) {
-        memory.getMemoryBlock(currProcess.getPid()).memoryLock();
+        MemoryBlock memoryBlock = memory.getMemoryBlock(currProcess.getPid());
+        memoryBlock.memoryLock();
         try {
-            MemoryBlock memoryBlock = memory.getMemoryBlock(currProcess.getPid());
             switch (currentInstruction.getOperation()) {
                 case "assign":
                     if (currentInstruction.getOperand1().equals("input")) {
@@ -116,7 +121,7 @@ public class SlaveCore extends Thread {
                     break;
             }
         } finally {
-            memory.getMemoryBlock(currProcess.getPid()).memoryUnlock();
+            memoryBlock.memoryUnlock();
         }
     }
 
