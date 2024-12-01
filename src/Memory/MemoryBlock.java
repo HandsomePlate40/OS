@@ -19,7 +19,7 @@ public class MemoryBlock {
         base++;
     }
 
-    private void updateCurrentlyUtilizedMemoryRemove(){
+    private void updateCurrentlyUtilizedMemoryRemove(){ // This method is not used in the code
         base--;
     }
 
@@ -27,7 +27,7 @@ public class MemoryBlock {
         lock.lock();
         try {
             if (base >= limit) {
-                System.out.println("****************Memory limit reached****************");
+                System.out.println("**************** Memory limit reached ****************");
                 return;
             }
             storedVars.put(varName, value);
@@ -43,7 +43,7 @@ public class MemoryBlock {
             if (storedVars.containsKey(varName)) {
                 return storedVars.get(varName);
             } else {
-                throw new IllegalArgumentException("****************Variable " + varName + " does not exist in memory****************");
+                throw new IllegalArgumentException("*********Variable " + varName + " does not exist in memory********");
             }
         } finally {
             lock.unlock();
@@ -65,7 +65,7 @@ public class MemoryBlock {
     public void printMemory() {
         lock.lock();
         try {
-            System.out.println("Memory Block: " + storedVars + " Number of elements : " + storedVars.size());
+            System.out.println("--- Memory Block: " + storedVars + " Number of elements : " + storedVars.size());
         } finally {
             lock.unlock();
         }

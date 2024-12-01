@@ -34,24 +34,21 @@ public class SlaveCore extends Thread {
                     burst++;
                 }
 
-                memory.getMemoryBlock(currProcess.getPid()).printMemory();
+                System.out.println("Memory block of process: " + currProcess.getPid()); memory.getMemoryBlock(currProcess.getPid()).printMemory();
 
 
                 if (currProcess.isComplete()) {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
                     memory.deallocateMemory(currProcess.getPid());
                     System.out.println("**Process " + currProcess.getPid() + " completed by SlaveCore " + this.getName() + "**");
-                    System.out.println();
-                    currProcess = null;
-                    status = false;
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
-                    System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by SlaveCore " + this.getName() + "**");
-                    System.out.println();
-                    currProcess = null;
-                    status = false;
+                    System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
                 }
+                System.out.println();
+                currProcess = null;
+                status = false;
             } else {
                 Thread.yield();
                 try {
@@ -102,7 +99,7 @@ public class SlaveCore extends Thread {
                     if (!memoryBlock.containsKey(currentInstruction.getVariable())) {
                         System.out.println("**************** Variable does not exist in memory" + " in Process " + currProcess.getPid() + " ****************");
                     } else {
-                        System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memoryBlock.getVar(currentInstruction.getVariable()) + " in Process " + currProcess.getPid());
+                        System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memoryBlock.getVar(currentInstruction.getVariable()) + " from Process " + currProcess.getPid());
                     }
                     break;
             }

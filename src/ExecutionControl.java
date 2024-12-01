@@ -9,7 +9,7 @@ public class ExecutionControl {
         ReadyQueue readyQueue = new ReadyQueue();
 
         System.out.println();
-        System.out.println("******************Welcome to the OS Simulator******************");
+        System.out.println("******************Welcome to the Simulator******************");
         System.out.println();
         System.out.println("******************Programs loaded into ReadyQueue******************");
         System.out.println();
