@@ -4,8 +4,12 @@ public class ProcessControlBlock{
     private ProcessState state;
     private final int limit;
 
+    public ProcessState getState() {
+        return state;
+    }
+
     public enum ProcessState {
-        NEW, READY, RUNNING, WAITING, TERMINATED
+        NEW, READY, RUNNING, TERMINATED
     }
 
     public ProcessControlBlock(int pid, int limit){

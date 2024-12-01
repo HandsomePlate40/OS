@@ -31,8 +31,8 @@ public class MasterCore {
                     Process currentRunningProcess = readyQueue.peekProcess();
                     if (currentRunningProcess != null) {
                         readyQueue.removeProcess();
-                        core.setCurrProcess(currentRunningProcess);
                         currentRunningProcess.getPcb().setState(ProcessControlBlock.ProcessState.RUNNING);
+                        core.setCurrProcess(currentRunningProcess);
                         core.setStatus(true);
                     }
                 }

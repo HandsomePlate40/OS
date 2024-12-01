@@ -25,6 +25,7 @@ public class Process implements Comparable<Process> {
     public ProcessControlBlock getPcb() { return pcb; }
     public void setPcb(ProcessControlBlock pcb) { this.pcb = pcb; }
     public boolean isComplete() { return isComplete; }
+    public void setComplete() { isComplete = true; }
 
     public Instruction getCurrentInstruction() {
         int programCounter = pcb.getProgramCounter();

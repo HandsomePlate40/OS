@@ -24,24 +24,27 @@ public class SlaveCore extends Thread {
             if (currProcess != null && !currProcess.isComplete()) {
                 status = true;
                 int burst = 0;
-
+                //round robin
                 while (burst < 2 && !currProcess.isComplete()) {
                     Instruction currentInstruction = currProcess.getCurrentInstruction();
                     if (currentInstruction != null) {
                         executeTask(currentInstruction);
                         currProcess.getPcb().updateProgramCounter();
+                    } else{
+                        currProcess.setComplete();
+                        break;
                     }
                     burst++;
                 }
+                    //Memory print
+                System.out.println("Memory block of process: " + currProcess.getPid() + " "); memory.getMemoryBlock(currProcess.getPid()).printMemory();
 
-                System.out.println("Memory block of process: " + currProcess.getPid()); memory.getMemoryBlock(currProcess.getPid()).printMemory();
 
-
-                if (currProcess.isComplete()) {
+                if (currProcess.isComplete() || currProcess.getCurrentInstruction() == null) { // bug fixed, process was not being removed correctly
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
                     memory.deallocateMemory(currProcess.getPid());
-                    System.out.println("**Process " + currProcess.getPid() + " completed by SlaveCore " + this.getName() + "**");
-                } else {
+                    System.out.println("**Process " + currProcess.getPid() + " completed by " + this.getName() + "**");
+                } else if(!currProcess.isComplete()) {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
                     System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
@@ -100,6 +103,7 @@ public class SlaveCore extends Thread {
                         System.out.println("**************** Variable does not exist in memory" + " in Process " + currProcess.getPid() + " ****************");
                     } else {
                         System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memoryBlock.getVar(currentInstruction.getVariable()) + " from Process " + currProcess.getPid());
+                        System.out.println();
                     }
                     break;
             }
