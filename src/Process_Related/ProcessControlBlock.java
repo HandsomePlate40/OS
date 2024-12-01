@@ -12,7 +12,7 @@ public class ProcessControlBlock{
         NEW, READY, RUNNING, TERMINATED
     }
 
-    public ProcessControlBlock(int pid, int limit){
+    public ProcessControlBlock( int limit){
         this.programCounter = 0;
         this.state = ProcessState.NEW;
         int base = 0;

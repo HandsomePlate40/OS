@@ -6,16 +6,20 @@ import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 import Queue.ReadyQueue;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
     private final Memory memory;
     private final ReadyQueue readyQueue;
+    private final ReentrantLock lock;
 
     public SlaveCore(ReadyQueue readyQueue, Memory memory) {
         this.status = false;
         this.readyQueue = readyQueue;
         this.memory = memory;
+        this.lock = new ReentrantLock();
     }
 
     @Override
@@ -36,9 +40,13 @@ public class SlaveCore extends Thread {
                     }
                     burst++;
                 }
-                    //Memory print
-                System.out.println("Memory block of process: " + currProcess.getPid() + " "); memory.getMemoryBlock(currProcess.getPid()).printMemory();
 
+                lock.lock();
+                try{
+                    System.out.println("Memory block of process: " + currProcess.getPid() + " "); memory.getMemoryBlock(currProcess.getPid()).printMemory();
+                } finally {
+                    lock.unlock();
+                }
 
                 if (currProcess.isComplete() || currProcess.getCurrentInstruction() == null) { // bug fixed, process was not being removed correctly
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);

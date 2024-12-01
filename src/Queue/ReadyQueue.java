@@ -58,4 +58,13 @@ public class ReadyQueue {
             lock.unlock();
         }
     }
+
+    public int getLength() {
+        lock.lock();
+        try {
+            return readyQueue.size();
+        } finally {
+            lock.unlock();
+        }
+    }
 }

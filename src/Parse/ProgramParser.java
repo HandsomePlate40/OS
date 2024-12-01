@@ -80,7 +80,7 @@ public class ProgramParser {
         Process newProcess = new Process();
         newProcess.setPid(PIDAssigner());
 
-        ProcessControlBlock newPCB = new ProcessControlBlock(newProcess.getPid(), getMemoryLimitForNewProcess(instructions));
+        ProcessControlBlock newPCB = new ProcessControlBlock(getMemoryLimitForNewProcess(instructions));
         newProcess.setPcb(newPCB);
 
         newProcess.setInstructions(instructions);
