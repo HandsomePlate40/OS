@@ -44,8 +44,7 @@ public class SlaveCore extends Thread {
 
                 lock.lock();
                 try {
-                    System.out.println("Memory block of process: " + currProcess.getPid() + " ");
-                    memory.getMemoryBlock(currProcess.getPid()).printMemory();
+                    memory.getMemoryBlock(currProcess.getPid()).printMemory(currProcess.getPid());
                 } finally {
                     lock.unlock();
                 }
@@ -53,11 +52,21 @@ public class SlaveCore extends Thread {
                 if (currProcess.isComplete() || currProcess.getCurrentInstruction() == null) {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
                     memory.deallocateMemory(currProcess.getPid());
-                    System.out.println("**Process " + currProcess.getPid() + " completed by " + this.getName() + "**");
+                    lock.lock();
+                    try {
+                        System.out.println("**Process " + currProcess.getPid() + " completed by " + this.getName() + "**");
+                    } finally{
+                        lock.unlock();
+                    }
                 } else {
                     currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
                     readyQueue.addProcess(currProcess);
-                    System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
+                    lock.lock();
+                    try{
+                        System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
+                    } finally{
+                        lock.unlock();
+                    }
                 }
                 System.out.println();
                 currProcess = null;

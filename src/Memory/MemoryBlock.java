@@ -58,10 +58,10 @@ public class MemoryBlock {
         lock.unlock();
     }
 
-    public void printMemory() {
+    public void printMemory(int pid) {
         lock.lock();
         try {
-            System.out.println("--- Memory Block: " + storedVars + " Number of elements : " + storedVars.size());
+            System.out.println("--- Memory Block for process: "+ pid + " || " + storedVars + " Number of elements : " + storedVars.size());
         } finally {
             lock.unlock();
         }

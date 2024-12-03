@@ -48,8 +48,8 @@ public class MasterCore {
             lock.lock();
             try {
                 updateProcessLog();
-                exitIfDone();
                 printProcessStats();
+                exitIfDone();
                 for (SlaveCore core : slaveCores) {
                     if (!core.isRunning() && !readyQueue.isEmpty()) {
                         Process currentRunningProcess = readyQueue.peekProcess();
