@@ -75,16 +75,16 @@ public class MasterCore {
 
     public void printProcessStats() {
         lock.lock();
-        if (!readyQueue.isEmpty()) {
-            try {
+        try {
+            synchronized (System.out) {
                 System.out.print(" || Current Process stats: ");
                 for (Process process : processStaticLog) {
                     System.out.print("|| Process: " + process.getPid() + " State: " + process.getPcb().getState());
                 }
                 System.out.println(" ||");
-            } finally {
-                lock.unlock();
             }
+        } finally {
+            lock.unlock();
         }
     }
 

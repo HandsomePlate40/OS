@@ -1,6 +1,7 @@
 package Parse;
 
 import Memory.Memory;
+import Memory.MemoryBlock;
 import Process_Related.Process;
 import Process_Related.ProcessControlBlock;
 
@@ -83,9 +84,8 @@ public class ProgramParser {
         ProcessControlBlock newPCB = new ProcessControlBlock(getMemoryLimitForNewProcess(instructions));
         newProcess.setPcb(newPCB);
 
-        newProcess.setInstructions(instructions);
         newProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
-        assignMemoryBlocksToProcesses(newProcess);
+        newProcess.getPcb().assignSharedMemoryBlock(assignMemoryBlocksToProcesses(newProcess, instructions));
         return newProcess;
     }
 
@@ -93,9 +93,8 @@ public class ProgramParser {
         return PIDCounter++;
     }
 
-    public void assignMemoryBlocksToProcesses(Process process){
-        //System.out.println("Assigning memory blocks to process " + process.getPid());
-        sharedMemory.allocateMemoryForProcess(process.getPid(), process.getPcb().getLimit());
+    public MemoryBlock assignMemoryBlocksToProcesses(Process process, List<Instruction> instructions){
+        return sharedMemory.allocateMemoryForProcess(process.getPid(), process.getPcb().getLimit(), instructions);
     }
 
     public int getMemoryLimitForNewProcess(List<Instruction> instructions){

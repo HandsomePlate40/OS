@@ -1,5 +1,11 @@
 package Memory;
+
+import Parse.Instruction;
+import Process_Related.Process;
+import Process_Related.ProcessControlBlock;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MemoryBlock {
@@ -7,12 +13,28 @@ public class MemoryBlock {
     private int base;
     private final int limit;
     private final ReentrantLock lock;
+    private final List<Instruction> instructions;
 
-    public MemoryBlock(int base, int limit) {
+    public MemoryBlock(int base, int limit, List<Instruction> instructions) {
         this.storedVars = new HashMap<>();
         this.base = base;
         this.limit = limit;
         this.lock = new ReentrantLock();
+        this.instructions = instructions;
+    }
+
+    public Instruction getCurrentInstruction(Process process) {
+        int programCounter = process.getPcb().getProgramCounter();
+        if(programCounter < instructions.size()){
+            return instructions.get(programCounter);
+        } else{
+            process.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
+            return null;
+        }
+    }
+
+    public int getInstructionsCount() {
+        return instructions.size();
     }
 
     private void updateCurrentlyUtilizedMemory(){

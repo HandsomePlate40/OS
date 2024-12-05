@@ -1,5 +1,9 @@
 package Memory;
+
+import Parse.Instruction;
+
 import java.util.HashMap;
+import java.util.List;
 
 public class Memory {
     private final HashMap<Integer, MemoryBlock> memoryMap;
@@ -8,9 +12,10 @@ public class Memory {
         this.memoryMap = new HashMap<>();
     }
 
-    public void allocateMemoryForProcess(int pid, int limit) {
-
-        memoryMap.put(pid, new MemoryBlock(0, limit));
+    public MemoryBlock allocateMemoryForProcess(int pid, int limit, List<Instruction> instructions) {
+        MemoryBlock memoryBlock = new MemoryBlock(0, limit, instructions);
+        memoryMap.put(pid, memoryBlock);
+        return memoryBlock;
     }
 
     public MemoryBlock getMemoryBlock(int pid) {

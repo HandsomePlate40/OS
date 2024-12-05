@@ -12,31 +12,31 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SlaveCore extends Thread {
     private Process currProcess;
     private boolean status;
-    private final Memory memory;
+    private final Memory sharedMemory;
     private final ReadyQueue readyQueue;
     private final ReentrantLock lock;
 
     public SlaveCore(ReadyQueue readyQueue, Memory memory) {
         this.status = false;
         this.readyQueue = readyQueue;
-        this.memory = memory;
+        this.sharedMemory = memory;
         this.lock = new ReentrantLock();
     }
 
     @Override
     public void run() {
         while (true) {
-            if (currProcess != null && !currProcess.isComplete()) {
+            if (currProcess != null && currProcess.getPcb().getState() != ProcessControlBlock.ProcessState.TERMINATED) {
                 status = true;
                 int burst = 0;
-                //round-robin
-                while (burst < 2 && !currProcess.isComplete()) {
-                    Instruction currentInstruction = currProcess.getCurrentInstruction();
+                // round-robin
+                while (burst < 2 && currProcess.getPcb().getState() != ProcessControlBlock.ProcessState.TERMINATED) {
+                    Instruction currentInstruction = sharedMemory.getMemoryBlock(currProcess.getPid()).getCurrentInstruction(currProcess);
                     if (currentInstruction != null) {
                         executeTask(currentInstruction);
                         currProcess.getPcb().updateProgramCounter();
                     } else {
-                        currProcess.setComplete();
+                        currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
                         break;
                     }
                     burst++;
@@ -44,28 +44,31 @@ public class SlaveCore extends Thread {
 
                 lock.lock();
                 try {
-                    memory.getMemoryBlock(currProcess.getPid()).printMemory(currProcess.getPid());
+                    sharedMemory.getMemoryBlock(currProcess.getPid()).printMemory(currProcess.getPid());
                 } finally {
                     lock.unlock();
                 }
 
-                if (currProcess.isComplete() || currProcess.getCurrentInstruction() == null) {
-                    currProcess.getPcb().setState(ProcessControlBlock.ProcessState.TERMINATED);
-                    memory.deallocateMemory(currProcess.getPid());
-                    lock.lock();
-                    try {
-                        System.out.println("**Process " + currProcess.getPid() + " completed by " + this.getName() + "**");
-                    } finally{
-                        lock.unlock();
-                    }
-                } else {
-                    currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
-                    readyQueue.addProcess(currProcess);
-                    lock.lock();
-                    try{
-                        System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
-                    } finally{
-                        lock.unlock();
+                synchronized (System.out) {
+                    if (currProcess.getPcb().getState() == ProcessControlBlock.ProcessState.TERMINATED ||
+                            sharedMemory.getMemoryBlock(currProcess.getPid()).getCurrentInstruction(currProcess) == null) {
+
+                        sharedMemory.deallocateMemory(currProcess.getPid());
+                        lock.lock();
+                        try {
+                            System.out.println("**Process " + currProcess.getPid() + " completed by " + this.getName() + "**");
+                        } finally {
+                            lock.unlock();
+                        }
+                    } else {
+                        currProcess.getPcb().setState(ProcessControlBlock.ProcessState.READY);
+                        readyQueue.addProcess(currProcess);
+                        lock.lock();
+                        try {
+                            System.out.println("**Process " + currProcess.getPid() + " added back to ReadyQueue by " + this.getName() + "**");
+                        } finally {
+                            lock.unlock();
+                        }
                     }
                 }
                 System.out.println();
@@ -86,7 +89,7 @@ public class SlaveCore extends Thread {
     }
 
     public void executeTask(Instruction currentInstruction) {
-        MemoryBlock memoryBlock = memory.getMemoryBlock(currProcess.getPid());
+        MemoryBlock memoryBlock = sharedMemory.getMemoryBlock(currProcess.getPid());
         memoryBlock.memoryLock();
         try {
             switch (currentInstruction.getOperation()) {
@@ -121,11 +124,13 @@ public class SlaveCore extends Thread {
                     }
                     break;
                 case "print":
-                    if (!memoryBlock.containsKey(currentInstruction.getVariable())) {
-                        System.out.println("**************** Variable does not exist in memory" + " in Process " + currProcess.getPid() + " ****************");
-                    } else {
-                        System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memoryBlock.getVar(currentInstruction.getVariable()) + " from Process " + currProcess.getPid());
-                        System.out.println();
+                    synchronized (System.out) {
+                        if (!memoryBlock.containsKey(currentInstruction.getVariable())) {
+                            System.out.println("**************** Variable does not exist in memory" + " in Process " + currProcess.getPid() + " ****************");
+                        } else {
+                            System.out.println("Variable: " + currentInstruction.getVariable() + " = " + memoryBlock.getVar(currentInstruction.getVariable()) + " from Process " + currProcess.getPid());
+                            System.out.println();
+                        }
                     }
                     break;
             }
