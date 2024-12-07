@@ -15,6 +15,7 @@ public class MasterCore {
     private final ReentrantLock lock;
     private final Queue<Process> processActiveLog; //keep tabs on all processes
     private final Queue<Process> processStaticLog;
+    private final ProcessControlBlock.ProcessState[] lastStates;
 
     public MasterCore(ReadyQueue readyQueue, Memory memory) {
         this.readyQueue = readyQueue;
@@ -40,6 +41,11 @@ public class MasterCore {
             readyQueue.addProcess(process);
         }
 
+        lastStates = new ProcessControlBlock.ProcessState[processStaticLog.size()];
+        for (int i = 0; i < processStaticLog.size(); i++) {
+            lastStates[i] = processStaticLog.peek().getPcb().getState();
+        }
+
         scheduleTask();
     }
 
@@ -48,7 +54,9 @@ public class MasterCore {
             lock.lock();
             try {
                 updateProcessLog();
-                printProcessStats();
+                if (hasStateChanged()) {
+                    printProcessStats();
+                }
                 exitIfDone();
                 for (SlaveCore core : slaveCores) {
                     if (!core.isRunning() && !readyQueue.isEmpty()) {
@@ -77,7 +85,7 @@ public class MasterCore {
         lock.lock();
         try {
             synchronized (System.out) {
-                System.out.print(" || Current Process stats: ");
+                System.out.print("|| Current Process stats: ");
                 for (Process process : processStaticLog) {
                     System.out.print("|| Process: " + process.getPid() + " State: " + process.getPcb().getState());
                 }
@@ -111,5 +119,18 @@ public class MasterCore {
         if(processActiveLog.isEmpty()){
             System.exit(0);
         }
+    }
+
+    private boolean hasStateChanged() {
+        boolean stateChanged = false;
+        int i = 0;
+        for (Process process : processStaticLog) {
+            if (process.getPcb().getState() != lastStates[i]) {
+                stateChanged = true;
+                lastStates[i] = process.getPcb().getState();
+            }
+            i++;
+        }
+        return stateChanged;
     }
 }
